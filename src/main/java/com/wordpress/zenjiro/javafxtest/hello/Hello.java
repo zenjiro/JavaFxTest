@@ -26,7 +26,6 @@ public class Hello extends Application {
 		stage.setTitle("こんにちは");
 		final Button button = new Button();
 		button.setText("こんにちは(_H)");
-		button.setMnemonicParsing(true);
 		button.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(final ActionEvent event) {
