@@ -50,6 +50,12 @@ public class GraphSample2 extends Application {
 		series2.setName("系列2");
 		// XXX 初期データがないと例外が発生する。
 		series1.getData().add(
+				new Data<Number, Number>(System.nanoTime() / 1000000 - 1000, new Random()
+						.nextInt(100)));
+		series2.getData().add(
+				new Data<Number, Number>(System.nanoTime() / 1000000 - 1000, new Random()
+						.nextInt(100)));
+		series1.getData().add(
 				new Data<Number, Number>(System.nanoTime() / 1000000, new Random().nextInt(100)));
 		series2.getData().add(
 				new Data<Number, Number>(System.nanoTime() / 1000000, new Random().nextInt(100)));
