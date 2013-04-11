@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -37,21 +36,25 @@ public class GraphSample2 extends Application {
 		final NumberAxis xAxis = new NumberAxis();
 		xAxis.setLabel("時刻");
 		xAxis.setAutoRanging(false);
+		xAxis.setTickUnit(10000);
 		final NumberAxis yAxis = new NumberAxis();
 		yAxis.setLabel("値");
 		yAxis.setAutoRanging(false);
 		yAxis.setUpperBound(200);
 		final StackedAreaChart<Number, Number> chart = new StackedAreaChart<Number, Number>(xAxis,
 				yAxis);
+		chart.setAnimated(false);
 		final Series<Number, Number> series1 = new Series<Number, Number>();
 		series1.setName("系列1");
 		final Series<Number, Number> series2 = new Series<Number, Number>();
 		series2.setName("系列2");
-		final AtomicInteger count = new AtomicInteger();
-		series1.getData().add(new Data<Number, Number>(count.get(), new Random().nextInt(100)));
-		series2.getData().add(new Data<Number, Number>(count.get(), new Random().nextInt(100)));
-		xAxis.setLowerBound(count.get() - 30);
-		xAxis.setUpperBound(count.get());
+		// XXX 初期データがないと例外が発生する。
+		series1.getData().add(
+				new Data<Number, Number>(System.nanoTime() / 1000000, new Random().nextInt(100)));
+		series2.getData().add(
+				new Data<Number, Number>(System.nanoTime() / 1000000, new Random().nextInt(100)));
+		xAxis.setLowerBound(System.nanoTime() / 1000000 - 31 * 1000);
+		xAxis.setUpperBound(System.nanoTime() / 1000000 - 1000);
 		chart.getData().add(series1);
 		chart.getData().add(series2);
 		stage.setScene(new Scene(chart, 640, 480));
@@ -62,9 +65,10 @@ public class GraphSample2 extends Application {
 		service.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-				count.incrementAndGet();
-				queue1.add(new Data<Number, Number>(count.get(), new Random().nextInt(100)));
-				queue2.add(new Data<Number, Number>(count.get(), new Random().nextInt(100)));
+				queue1.add(new Data<Number, Number>(System.nanoTime() / 1000000, new Random()
+						.nextInt(100)));
+				queue2.add(new Data<Number, Number>(System.nanoTime() / 1000000, new Random()
+						.nextInt(100)));
 			}
 		}, 1, 1, TimeUnit.SECONDS);
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -75,15 +79,15 @@ public class GraphSample2 extends Application {
 		});
 		new AnimationTimer() {
 			@Override
-			public void handle(long now) {
+			public void handle(final long now) {
 				if (!queue1.isEmpty()) {
 					series1.getData().add(queue1.poll());
 				}
 				if (!queue2.isEmpty()) {
 					series2.getData().add(queue2.poll());
-					xAxis.setLowerBound(count.get() - 30);
-					xAxis.setUpperBound(count.get());
 				}
+				xAxis.setLowerBound(System.nanoTime() / 1000000 - 31 * 1000);
+				xAxis.setUpperBound(System.nanoTime() / 1000000 - 1000);
 			}
 		}.start();
 	}
