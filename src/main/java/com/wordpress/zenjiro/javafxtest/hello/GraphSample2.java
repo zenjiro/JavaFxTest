@@ -15,6 +15,9 @@ import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.stage.Stage;
+import javafx.util.converter.NumberStringConverter;
+
+import org.apache.commons.lang3.time.FastDateFormat;
 
 /**
  * リアルタイムグラフを表示する練習
@@ -36,6 +39,19 @@ public class GraphSample2 extends Application {
 		xAxis.setLabel("時刻");
 		xAxis.setAutoRanging(false);
 		xAxis.setTickUnit(10000);
+		xAxis.setTickLabelFormatter(new NumberStringConverter() {
+			@Override
+			public String toString(final Number value) {
+				final long currentTimeMillis = System.currentTimeMillis();
+				final long diff = currentTimeMillis - value.longValue();
+				if (diff < 2000) {
+					return "今";
+				} else {
+					return String.format("%d秒前\n（%s）", diff / 1000 - 1,
+							FastDateFormat.getInstance("HH:mm:ss").format(value.longValue()));
+				}
+			}
+		});
 		final NumberAxis yAxis = new NumberAxis();
 		yAxis.setLabel("値");
 		yAxis.setAutoRanging(false);
@@ -49,17 +65,17 @@ public class GraphSample2 extends Application {
 		series2.setName("系列2");
 		// XXX 初期データがないと例外が発生する。
 		series1.getData().add(
-				new Data<Number, Number>(System.nanoTime() / 1000000 - 1000, new Random()
+				new Data<Number, Number>(System.currentTimeMillis() - 1000, new Random()
 						.nextInt(100)));
 		series2.getData().add(
-				new Data<Number, Number>(System.nanoTime() / 1000000 - 1000, new Random()
+				new Data<Number, Number>(System.currentTimeMillis() - 1000, new Random()
 						.nextInt(100)));
 		series1.getData().add(
-				new Data<Number, Number>(System.nanoTime() / 1000000, new Random().nextInt(100)));
+				new Data<Number, Number>(System.currentTimeMillis(), new Random().nextInt(100)));
 		series2.getData().add(
-				new Data<Number, Number>(System.nanoTime() / 1000000, new Random().nextInt(100)));
-		xAxis.setLowerBound(System.nanoTime() / 1000000 - 31 * 1000);
-		xAxis.setUpperBound(System.nanoTime() / 1000000 - 1000);
+				new Data<Number, Number>(System.currentTimeMillis(), new Random().nextInt(100)));
+		xAxis.setLowerBound(System.currentTimeMillis() - 31 * 1000);
+		xAxis.setUpperBound(System.currentTimeMillis() - 1000);
 		chart.getData().add(series1);
 		chart.getData().add(series2);
 		stage.setScene(new Scene(chart, 640, 480));
@@ -78,9 +94,9 @@ public class GraphSample2 extends Application {
 		service.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
-				queue1.add(new Data<Number, Number>(System.nanoTime() / 1000000, new Random()
+				queue1.add(new Data<Number, Number>(System.currentTimeMillis(), new Random()
 						.nextInt(100)));
-				queue2.add(new Data<Number, Number>(System.nanoTime() / 1000000, new Random()
+				queue2.add(new Data<Number, Number>(System.currentTimeMillis(), new Random()
 						.nextInt(100)));
 			}
 		}, 1, 1, TimeUnit.SECONDS);
@@ -99,8 +115,8 @@ public class GraphSample2 extends Application {
 						series2.getData().remove(0, series2.getData().size() - 32);
 					}
 				}
-				xAxis.setLowerBound(System.nanoTime() / 1000000 - 31 * 1000);
-				xAxis.setUpperBound(System.nanoTime() / 1000000 - 1000);
+				xAxis.setLowerBound(System.currentTimeMillis() - 31 * 1000);
+				xAxis.setUpperBound(System.currentTimeMillis() - 1000);
 			}
 		}.start();
 	}
