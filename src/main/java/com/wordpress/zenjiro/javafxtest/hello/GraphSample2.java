@@ -89,9 +89,15 @@ public class GraphSample2 extends Application {
 			public void handle(final long now) {
 				if (!queue1.isEmpty()) {
 					series1.getData().add(queue1.poll());
+					if (series1.getData().size() > 32) {
+						series1.getData().remove(0, series1.getData().size() - 32);
+					}
 				}
 				if (!queue2.isEmpty()) {
 					series2.getData().add(queue2.poll());
+					if (series2.getData().size() > 32) {
+						series2.getData().remove(0, series2.getData().size() - 32);
+					}
 				}
 				xAxis.setLowerBound(System.nanoTime() / 1000000 - 31 * 1000);
 				xAxis.setUpperBound(System.nanoTime() / 1000000 - 1000);
