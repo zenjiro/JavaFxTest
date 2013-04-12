@@ -4,18 +4,17 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 /**
  * リアルタイムグラフを表示する練習
@@ -67,7 +66,15 @@ public class GraphSample2 extends Application {
 		stage.show();
 		final ConcurrentLinkedQueue<Data<Number, Number>> queue1 = new ConcurrentLinkedQueue<Data<Number, Number>>();
 		final ConcurrentLinkedQueue<Data<Number, Number>> queue2 = new ConcurrentLinkedQueue<Data<Number, Number>>();
-		final ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
+		final ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
+				new ThreadFactory() {
+					@Override
+					public Thread newThread(final Runnable runnable) {
+						final Thread thread = new Thread(runnable);
+						thread.setDaemon(true);
+						return thread;
+					}
+				});
 		service.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
@@ -77,12 +84,6 @@ public class GraphSample2 extends Application {
 						.nextInt(100)));
 			}
 		}, 1, 1, TimeUnit.SECONDS);
-		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(final WindowEvent event) {
-				service.shutdown();
-			}
-		});
 		new AnimationTimer() {
 			@Override
 			public void handle(final long now) {
