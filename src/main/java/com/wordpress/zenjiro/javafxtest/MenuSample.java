@@ -1,4 +1,4 @@
-package com.wordpress.zenjiro.javafxtest.hello;
+package com.wordpress.zenjiro.javafxtest;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

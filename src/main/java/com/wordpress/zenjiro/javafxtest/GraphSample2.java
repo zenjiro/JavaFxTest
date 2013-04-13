@@ -1,4 +1,4 @@
-package com.wordpress.zenjiro.javafxtest.hello;
+package com.wordpress.zenjiro.javafxtest;
 
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;

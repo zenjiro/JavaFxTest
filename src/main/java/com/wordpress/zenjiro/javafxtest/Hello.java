@@ -1,4 +1,4 @@
-package com.wordpress.zenjiro.javafxtest.hello;
+package com.wordpress.zenjiro.javafxtest;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
