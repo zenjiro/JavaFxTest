@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -57,6 +58,10 @@ public class Login extends Application {
 		final PasswordField passwordField = new PasswordField();
 		passwordLabel.setLabelFor(passwordField);
 		gridPane.add(passwordField, 1, 2, 2, 1);
+		final Label messageLabel = new Label("ここにメッセージ");
+		messageLabel.setWrapText(true);
+		gridPane.add(messageLabel, 0, 3, 2, 1);
+		GridPane.setValignment(messageLabel, VPos.BOTTOM);
 		final Button loginButton = new Button("ログイン(_L)");
 		loginButton.setPrefHeight(Font.getDefault().getSize() * 3);
 		loginButton.setDefaultButton(true);
@@ -74,8 +79,12 @@ public class Login extends Application {
 		});
 		gridPane.add(loginButton, 2, 3);
 		GridPane.setHalignment(loginButton, HPos.RIGHT);
+		GridPane.setValignment(loginButton, VPos.BOTTOM);
 		final Scene scene = new Scene(gridPane);
 		stage.setScene(scene);
 		stage.show();
+		userLabel.setMinWidth(userLabel.getWidth());
+		passwordLabel.setMinWidth(passwordLabel.getWidth());
+		loginButton.setMinWidth(loginButton.getWidth());
 	}
 }
