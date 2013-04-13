@@ -60,6 +60,8 @@ public class Login extends Application {
 		final Button loginButton = new Button("ログイン(_L)");
 		loginButton.setPrefHeight(Font.getDefault().getSize() * 3);
 		loginButton.setDefaultButton(true);
+		// XXX Enterキーやマウスクリックでは押せないけど、Alt+Lなら押せてしまう。
+		loginButton.disableProperty().bind(userField.lengthProperty().greaterThan(0).not());
 		loginButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(final ActionEvent event) {
